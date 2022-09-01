@@ -3,8 +3,6 @@
 # install.packages('SimDesign')
 # SimDesign::bias()
 
-
-
 library(tidyverse)
 suppressMessages(library(pacman))
 suppressMessages(pacman::p_load(tidyverse, leaflet, httr, XML, googlesheets4))
@@ -50,4 +48,4 @@ probando %>%
 
 
 googlesheets4::sheet_names(ss = f)
-
+   
