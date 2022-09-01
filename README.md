@@ -2,5 +2,5 @@
 
 This project is on going
 
-Data sourse: 
+Data source: 
       https://www.animalcrossingportal.com/tier-lists/new-horizons/all-villagers#/
