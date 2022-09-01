@@ -1,0 +1,51 @@
+---
+title: "Animal Crossing New Horizons Popularity"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+Test
+
+```{r}
+# GitHub profile --- https://github.com/Ampiiere/acnh-scrapper
+# https://www.animalcrossingportal.com/tier-lists/new-horizons/all-villagers#/
+
+library(tidyverse)
+suppressMessages(library(pacman))
+suppressMessages(pacman::p_load(tidyverse, leaflet, downloader))
+
+url = "https://www.animalcrossingportal.com/games/new-horizons/guides/villager-popularity-list.php#/"
+
+# https://docs.google.com/spreadsheets/d/1EcShv6h45-U7CsYEjN_ock5wsoXiRU9lFrjkawp1_0g/edit?usp=sharing
+
+# https://docs.google.com/spreadsheets/d/1u-KinMRpy7gA_8C0FQ-AaHSU3gc-Y9UM6aj2obvipOw/edit?usp=sharing
+
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
