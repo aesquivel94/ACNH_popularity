@@ -2,5 +2,6 @@
 
 This project is on going
 
-Data source: 
+Data sources: 
       https://www.animalcrossingportal.com/tier-lists/new-horizons/all-villagers#/
+       https://www.kaggle.com/datasets/ampiiere/acnh-villager-popularity
