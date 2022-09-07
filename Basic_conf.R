@@ -59,15 +59,52 @@ links <- links %>%
   # The "Least Popular" tier contains 163 villagers
   
 
+### Reading raw data -- we have two different formats of tables. 
 
-  url_doc <- links[1,3] %>% pull()
+#  TEMPORAL, FIRST RUN
+tictoc::tic()
+table_month <- list()
+for(i in 1:nrow(links)){
+  
+  url_doc <- links[i,3] %>% pull()
   
   # It doesn't work into a function by now... working on it
   # Maybe i can iterate using a loop using a 
   # list or something like that. And after that joing with the other tables. 
   # Reading spreadsheet --- 
-  table_month <- googlesheets4::read_sheet(ss = url_doc, col_names = FALSE) %>% 
-    as.tibble() %>% 
+  table_month[[i]] <- googlesheets4::read_sheet(ss = url_doc, col_names = FALSE)
+}
+tictoc::toc() # 368.22/60 =  6.137 min 
+
+
+
+# =---------------------------
+
+# parameter
+# raw_table <- table_month[[2]] 
+
+
+defining_format <- function(raw_table){
+  ncolums <- raw_table %>% dim(.) %>% .[2]
+  
+  if(ncolums > 2){
+    
+    # names_raw <- raw_table[1,]
+    table_pre_clean <- raw_table[-1, ]  %>% 
+      as.tibble() %>% 
+      .[, 6:7] %>% 
+      unnest() %>% 
+      set_names(c('villager', 'votes'))
+    
+  }else{
+    
+    table_pre_clean <- raw_table %>% as.tibble() %>% 
+      set_names(c('villager', 'votes'))
+    
+  }
+  
+  # Organizing data  
+  table_fixed <- table_pre_clean %>% as.tibble() %>% 
     set_names(c('villager', 'votes')) %>% 
     arrange(desc(votes)) %>% 
     # This line is gonna be temporal, but it works by now. 
@@ -77,13 +114,19 @@ links <- links %>%
                     rep("Middle_Ground", 60),
                     rep("Less_Popular", 120),
                     rep("Less_Popular", n() - (15+25+30+60+120))))
-
-
-
-  tier_table <- dplyr::bind_cols(links[1,], table_month) %>% 
-    dplyr::select(-docs)
   
+return(table_fixed)}
 
+  
+defining_format(table_month[[1]] )
 
+# Defining data. 
+table_month_D <- purrr::map(.x = table_month, .f = defining_format)
+  
+# Raw data, should be cleaned...
+# Join all data
+all_data <- purrr::map2(.x =links %>% dplyr::group_split(row_number()) ,.y = table_month_D, .f = dplyr::bind_cols) %>% 
+  dplyr::bind_rows(.) %>% 
+  dplyr::select(-docs)
 
    
