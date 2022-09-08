@@ -9,7 +9,7 @@ options(warn = -1, scipen = 999)
 
 # Load libraries
 suppressMessages(library(pacman))
-suppressMessages(pacman::p_load(tidyverse, leaflet, httr, XML, googlesheets4))
+suppressMessages(pacman::p_load(tidyverse, leaflet, httr, XML, googlesheets4, rvest))
 googlesheets4::gs4_deauth()
 
 #  Web Scraping ----- 
@@ -121,12 +121,41 @@ return(table_fixed)}
 defining_format(table_month[[1]] )
 
 # Defining data. 
+# We have some villager like  Raymond (it's tier one) with NA
+# Needs QC. 
 table_month_D <- purrr::map(.x = table_month, .f = defining_format)
   
 # Raw data, should be cleaned...
 # Join all data
 all_data <- purrr::map2(.x =links %>% dplyr::group_split(row_number()) ,.y = table_month_D, .f = dplyr::bind_cols) %>% 
   dplyr::bind_rows(.) %>% 
-  dplyr::select(-docs)
+  dplyr::select(-docs) %>% 
+  drop_na(villager) %>% 
+  dplyr::distinct(.)
 
    
+
+
+#### =------------ Data for all of the Villagers 
+
+library(rvest)
+
+theurl <- "https://nookipedia.com/wiki/Villager/New_Horizons"
+file<-read_html(theurl)
+tables<-html_nodes(file, "table")
+table1 <- html_table(tables[1], fill = TRUE) %>% .[[1]]
+
+villagers_information <- table1 %>% 
+  dplyr::select(-Poster) %>% 
+  rename(villager = 'Name')
+
+
+
+Complete_Data <- dplyr::inner_join(all_data, villagers_information, by = 'villager')
+
+# all_data %>% 
+#   dplyr::filter(villager == 'Raymond') %>% 
+#   View(.)
+# 
+# all_data %>% dplyr::distinct(.)
+
